@@ -2,6 +2,8 @@ package domain;
 
 import java.util.ArrayList;
 
+//TODO rename to something not 'Database'
+
 public class Database {
     private ArrayList<Superhero> superheroes;
 
