@@ -1,6 +1,6 @@
 package ui;
 
-import domain.Database;
+import domain.Controller;
 import domain.Superhero;
 
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class Menu {
     Scanner scanner;
-    Database database = new Database();
+    Controller controller = new Controller();
 
     final int CREATE_CHOICE = 1;
     final int PRINT_CHOICE = 2;
@@ -33,7 +33,7 @@ public class Menu {
                 choice = Integer.parseInt(scanner.nextLine());
             }
             catch(NumberFormatException e){
-                System.out.print("\u001B[31mMust input a number!\u001B[0m");
+                System.out.print(Colour.RED+"Must input a number!"+Colour.RESET);
                 choice = DEFAULT_CHOICE;
             }
             switch (choice) {
@@ -48,30 +48,31 @@ public class Menu {
     }
 
     public void welcome(){
-        System.out.print("""
+        System.out.printf("""
                 \nWelcome to the Superhero Database Program!
                 Please pick one of the below options:
                 ------------------------------------------
-                1---\u001B[32mCreate Superhero\u001B[0m----------------------
-                2---\u001B[32mPrint Database\u001B[0m------------------------
-                3---\u001B[32mSearch Database\u001B[0m-----------------------
-                4---\u001B[32mEdit Hero\u001B[0m-----------------------------
-                5---\u001B[32mRemove Hero\u001B[0m---------------------------
-                9---\u001B[31mExit Program\u001B[0m--------------------------
+                1---%sCreate Superhero%s----------------------
+                2---%sPrint Database%s------------------------
+                3---%sSearch Database%s-----------------------
+                4---%sEdit Hero%s-----------------------------
+                5---%sRemove Hero%s---------------------------
+                9---%sExit Program%s--------------------------
                 ------------------------------------------
-                """);
+                """,Colour.GREEN,Colour.RESET,Colour.GREEN,Colour.RESET,Colour.GREEN,Colour.RESET,
+                Colour.GREEN,Colour.RESET,Colour.GREEN,Colour.RESET,Colour.RED,Colour.RESET);
     }
 
     public void createSuperhero(){
         scanner = new Scanner(System.in);
-        System.out.print("""
+        System.out.printf("""
                 ------------------------------------------
                 You have chosen "Create Superhero".
-                \u001B[31mBlank entries will be set to a default\u001B[0m
+                %sBlank entries will be set to a default%s
                 Please enter the following
                 info about the hero:
                 ------------------------------------------
-                """);
+                """,Colour.RED,Colour.RESET);
         System.out.print("Hero name: ");
         String name = scanner.nextLine();
         if(name.isEmpty()){
@@ -97,8 +98,8 @@ public class Menu {
             yearCreated = Integer.parseInt(year);
         }
         catch(NumberFormatException e){
-            System.out.println("\u001B[31mMust input a number!\u001B[0m");
-            System.out.println("\u001B[31mDefaulted to year 0.\u001B[0m");
+            System.out.println(Colour.RED+"Must input a number!\n" +
+                    "Defaulted to year 0."+Colour.RESET);
             yearCreated = 0;
         }
         System.out.print("Is the hero human? ");
@@ -116,25 +117,25 @@ public class Menu {
             strength = Double.parseDouble(strengthValue);
         }
         catch(NumberFormatException e){
-            System.out.println("\u001B[31mMust input a number!\u001B[0m");
-            System.out.println("\u001B[31mDefaulted to strength value of 1.\u001B[0m");
+            System.out.println(Colour.RED+"Must input a number!\n" +
+                    "Defaulted to strength value of 1."+Colour.RESET);
             strength = 1;
         }
         //using values to make a new superhero
         Superhero newHero = new Superhero(name,realName,superPower,yearCreated,isHuman,strength);
         //adds the hero to the database
-        database.addSuperhero(newHero);
+        controller.addSuperhero(newHero);
         //printing out the hero info
         System.out.printf("""
                 ------------------------------------------
                 New hero added to Database:
                 %s
-                ------------------------------------------""",newHero);
+                ------------------------------------------""",Colour.GREEN+newHero+Colour.RESET);
     }
 
     public void printDatabase(){
-        if(database.getSuperheroes().isEmpty()){
-            System.out.println("\u001B[31mDatabase is empty!\u001B[0m");
+        if(controller.getSuperheroes().isEmpty()){
+            System.out.println(Colour.RED+"Database is empty!"+Colour.RESET);
             return;
         }
         System.out.print("""
@@ -143,12 +144,12 @@ public class Menu {
                 Printing Database of Heroes...
                 ------------------------------------------
                 """);
-        System.out.print(database);
+        System.out.print(controller); //todo fix
     }
 
     public void searchDatabase(){
-        if(database.getSuperheroes().isEmpty()){
-            System.out.println("\u001B[31mDatabase is empty!\u001B[0m");
+        if(controller.getSuperheroes().isEmpty()){
+            System.out.println(Colour.RED+"Database is empty!"+Colour.RESET);
             return;
         }
         scanner = new Scanner(System.in);
@@ -160,24 +161,24 @@ public class Menu {
                 ------------------------------------------
                 """);
         String name = scanner.nextLine();
-        ArrayList<Superhero> searchResult = database.searchHeroByName(name);
+        ArrayList<Superhero> searchResult = controller.searchHeroByName(name);
         if (!searchResult.isEmpty()){
             for (int i = 0; i < searchResult.size(); i++) {
                 System.out.println((i+1)+"---"+searchResult.get(i));
             }
         }else{
-            System.out.println("\u001B[31mHero not found!\u001B[0m");
+            System.out.println(Colour.RED+"Here not found!"+Colour.RESET);
         }
         System.out.print("------------------------------------------");
     }
 
     public void editHero(){
-        if(database.getSuperheroes().isEmpty()){
-            System.out.println("\u001B[31mDatabase is empty!\u001B[0m");
+        if(controller.getSuperheroes().isEmpty()){
+            System.out.println(Colour.RED+"Database is empty!"+Colour.RESET);
             return;
         }
         scanner = new Scanner(System.in);
-        ArrayList<Superhero> heroList = database.getSuperheroes();
+        ArrayList<Superhero> heroList = controller.getSuperheroes();
         System.out.print("""
                 ------------------------------------------
                 You have chosen "Edit Hero".
@@ -194,12 +195,12 @@ public class Menu {
             selection = scanner.nextInt();
             scanner.nextLine(); //flush
             if(selection <= 0 || selection > heroList.size()){
-                System.out.print("\u001B[31mInserted number is not an option!\u001B[0m");
+                System.out.println(Colour.RED+"Inserted number is not an option!"+Colour.RESET);
                 return;
             }
         }
         catch(InputMismatchException e){
-            System.out.print("\u001B[31mMust input a number!\u001B[0m");
+            System.out.println(Colour.RED+"Must input a number!"+Colour.RESET);
             return;
         }
         Superhero selectedHero = heroList.get(selection-1); //removing 1 from the number to match index
@@ -209,10 +210,10 @@ public class Menu {
                 Selected hero:
                 %s
                 ------------------------------------------
-                \u001B[31mPress enter to skip edit, otherwise fill
-                in an edit and press enter\u001B[0m
+                %sPress enter to skip edit, otherwise fill
+                in an edit and press enter%s
                 ------------------------------------------
-                """,selectedHero);
+                """,selectedHero,Colour.RED,Colour.RESET);
         System.out.print("Hero name: "+selectedHero.getName()+"\nNew name: ");
         String name = scanner.nextLine();
         if(name.isEmpty()){
@@ -238,8 +239,8 @@ public class Menu {
             yearCreated = Integer.parseInt(newYear);
         }
         catch(NumberFormatException e){
-            System.out.println("\u001B[31mMust input a number!\u001B[0m");
-            System.out.println("\u001B[31mField left unchanged.\u001B[0m");
+            System.out.println(Colour.RED+"Must input a number!\n" +
+                    "Field left unchanged."+Colour.RESET);
             yearCreated = selectedHero.getYearCreated();
         }
         System.out.print("\nIs the hero human? "+selectedHero.getIsHuman()+"\nStill human? ");
@@ -257,58 +258,58 @@ public class Menu {
             strength = Double.parseDouble(newStrength);
         }
         catch(NumberFormatException e){
-            System.out.println("\u001B[31mMust input a number!\u001B[0m");
-            System.out.println("\u001B[31mField left unchanged.\u001B[0m");
+            System.out.println(Colour.RED+"Must input a number!\n" +
+                    "Field left unchanged."+Colour.RESET);
             strength = selectedHero.getStrength();
         }
         //using values to make a new superhero
         Superhero newHero = new Superhero(name,realName,superPower,yearCreated,isHuman,strength);
         //adds the hero to the database on the same spot as the hero that was selected
         heroList.set((selection-1),newHero);
-        database.setSuperheroes(heroList);
+        controller.setSuperheroes(heroList);
         System.out.printf("""
                 ------------------------------------------
-                \u001B[32mEdit complete!\u001B[0m
+                %sEdit complete!%s
                 %s
                 ------------------------------------------
-                """,newHero);
+                """,Colour.GREEN,Colour.RESET,newHero);
     }
 
     public void removeHero(){
-        if(database.getSuperheroes().isEmpty()){
-            System.out.println("\u001B[31mDatabase is empty!\u001B[0m");
+        if(controller.getSuperheroes().isEmpty()){
+            System.out.println(Colour.RED+"Database is empty!"+Colour.RESET);
             return;
         }
         scanner = new Scanner(System.in);
-        System.out.print("""
+        System.out.printf("""
                 ------------------------------------------
                 You have chosen "Remove Hero".
                 Please enter the number of the hero that
                 you would like to remove:
-                \u001B[31mThis choice is final and cannot be undone!\u001B[0m
+                %sThis choice is final and cannot be undone!%s
                 ------------------------------------------
-                """);
-        for (int i = 0; i < database.getSuperheroes().size(); i++) {
-            System.out.println((i+1)+"---"+database.getSuperheroes().get(i));
+                """,Colour.RED,Colour.RESET);
+        for (int i = 0; i < controller.getSuperheroes().size(); i++) {
+            System.out.println((i+1)+"---"+ controller.getSuperheroes().get(i));
         }
         System.out.print("------------------------------------------\n");
         int selection;
         try {
             selection = scanner.nextInt();
             scanner.nextLine(); //flush
-            if(selection <= 0 || selection > database.getSuperheroes().size()){
-                System.out.print("\u001B[31mInserted number is not an option!\u001B[0m");
+            if(selection <= 0 || selection > controller.getSuperheroes().size()){
+                System.out.println(Colour.RED+"Inserted number is not an option!"+Colour.RESET);
                 return;
             }
         }
         catch(InputMismatchException e){
-            System.out.print("\u001B[31mMust input a number!\u001B[0m");
+            System.out.println(Colour.RED+"Must input a number!"+Colour.RESET);
             return;
         }
-        Superhero deletedHero = database.getSuperheroes().get(selection-1);
-        database.removeSuperhero(deletedHero);
+        Superhero deletedHero = controller.getSuperheroes().get(selection-1);
+        controller.removeSuperhero(deletedHero);
         System.out.print("------------------------------------------\n");
-        System.out.println("\u001B[31mRemoved!\u001B[0m");
+        System.out.println(Colour.RED+"Removed!"+Colour.RESET);
         System.out.print("\n------------------------------------------");
     }
 
