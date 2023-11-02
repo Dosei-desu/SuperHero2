@@ -144,7 +144,7 @@ public class Menu {
                 Printing Database of Heroes...
                 ------------------------------------------
                 """);
-        System.out.print(controller); //todo fix
+        System.out.print(controller);
     }
 
     public void searchDatabase(){

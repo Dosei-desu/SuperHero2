@@ -20,7 +20,7 @@ public class Controller {
 
     public void addSuperhero(Superhero hero) {
         superheroes.add(hero);
-        fileWrangler.save(hero);
+        fileWrangler.save(superheroes);
     }
 
     public ArrayList<Superhero> getSuperheroes() {
@@ -29,10 +29,12 @@ public class Controller {
 
     public void setSuperheroes(ArrayList<Superhero> superheroes) {
         this.superheroes = superheroes;
+        fileWrangler.save(superheroes);
     }
 
     public void removeSuperhero(Superhero superhero) {
         superheroes.remove(superhero);
+        fileWrangler.save(superheroes);
     }
 
     public ArrayList<Superhero> searchHeroByName(String name) {
